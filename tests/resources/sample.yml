@@ -15,7 +15,3 @@ check_sample:
     result: "check_sample:"
     line_count: 3
 
-check_memory:
-  gather:
-    type: memory
-

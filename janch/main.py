@@ -1,7 +1,7 @@
 import asyncio
 from typing import Callable, List, Dict
 
-from janch.lib import *
+from janch.src import *
 
 
 def init(config,
