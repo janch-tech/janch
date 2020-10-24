@@ -1,0 +1,21 @@
+webservice:
+  gather:
+    type: curl
+    url: http://localhost
+  inspect:
+    status: 200
+    html: Hello World
+
+check_sample:
+  gather:
+    type: grep
+    filepath: tests/resources/sample.yml
+    search: check_sample
+  inspect:
+    result: "check_sample:"
+    line_count: 3
+
+check_memory:
+  gather:
+    type: memory
+
