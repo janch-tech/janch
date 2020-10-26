@@ -1,4 +1,4 @@
-webservice:
+webservice-example:
   gather:
     type: curl
     url: http://localhost
@@ -6,12 +6,20 @@ webservice:
     status: 200
     html: Hello World
 
-check_sample:
+grep-example:
   gather:
     type: grep
-    filepath: tests/resources/sample.yml
-    search: check_sample
+    filepath: .env
+    search: "="
   inspect:
-    result: "check_sample:"
-    line_count: 3
+    result:
+      type: regex
+      value: "(.*)=(.*)"
+    line_count: 1
 
+command-example:
+  gather:
+    type: command
+    command_str: "cat .env | grep \"Hello\""
+  inspect:
+    result: Hello=world

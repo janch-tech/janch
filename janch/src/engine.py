@@ -3,28 +3,40 @@ import asyncio
 from janch.src import context
 
 
-def info(message):
-    print(message)
+def debug(message):
+    (f"*** {message} *** ")
+
 
 
 async def inspect(gathered, settings):
-    info("Inspecting")
+    debug("Inspecting")
 
     ret = {}
 
-    type = 'equals'
-    for name, value in settings.items():
-        inspected = await context.inspectors[type](value, gathered[name])
+    DEFAULT = 'regex'
+    for name, details in settings.items():
+
+        if isinstance(details, dict):
+            type = details.get('type') or DEFAULT
+            value = details.get('value')
+        elif not isinstance(details,str):
+            type = 'equals'
+            value = details
+        else:
+            type = DEFAULT
+            value = details
+
+        inspected = await context.inspectors[type](gathered[name], value)
         ret[name] = inspected
 
-    info("Inspection Completed")
+    debug("Inspection Completed")
 
     return ret
 
 
 async def gather(settings):
-    info("Gathering")
-    type = settings["type"]
+    debug("Gathering")
+    type = settings.get("type") or "curl"
     gatherer = context.gatherers[type]
 
     gathered = None
@@ -39,19 +51,32 @@ async def gather(settings):
         for k,v in gathered.items():
             assert k in output
 
-    info("Gathering Completed")
+    debug("Gathering Completed")
 
     return gathered
 
 
+async def log(item, inspected, settings):
+    debug("Logging")
+    type=settings.get('type') or 'cli'
+    logger = context.loggers[type]
+
+    if logger:
+        params = inspected
+        method = logger['method']
+
+        logger = await method(item, params)
+
+    debug("Logging Completed")
 
 
 async def start_item(item, settings):
-    info(f"Starting {item}")
+    debug(f"Starting {item}")
     gathered = await gather(settings['gather'])
-    info(await inspect(gathered, settings['inspect']))
+    inspected=await inspect(gathered, settings['inspect'])
+    logged=await log(item, inspected, settings.get('log') or {})
 
-    info("Complete")
+    debug("Complete")
 
 
 async def start():
