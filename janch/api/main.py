@@ -1,7 +1,8 @@
 import asyncio
 from typing import Callable, List, Dict
 
-from janch.src import *
+from janch.factories import *
+from janch.utils import *
 
 
 def init(config, environment,
@@ -11,14 +12,14 @@ def init(config, environment,
          loggers: List[Callable[[dict], dict]] = None):
     context.gatherers.update(get_default_gatherers())
     context.inspectors.update(get_default_inspectors())
+    context.formatters.update(get_default_formatters())
     context.loggers.update(get_default_loggers())
-    context.actors.update(get_default_actors())
 
     context.config.update(config)
     context.gatherers.update(gatherers or {})
     context.inspectors.update(inspectors or {})
-    context.actors.update(actors or {})
-    context.loggers.update(loggers or {})
+    context.loggers.update(actors or {})
+    context.formatters.update(loggers or {})
     context.environment.update(environment)
 
 
@@ -30,18 +31,16 @@ def update_inspectors(gatherer: Dict[str, Callable[[dict], dict]]):
     context.gatherers.update(gatherer)
 
 
-def update_actors(gatherer: Dict[str, Callable[[dict], dict]]):
-    context.gatherers.update(gatherer)
+def update_loggers(logger: Dict[str, Callable[[dict], dict]]):
+    context.loggers.update(logger)
 
 
-def update_loggers(gatherer: Dict[str, Callable[[dict], dict]]):
-    context.gatherers.update(gatherer)
+def update_formatters(formatter: Dict[str, Callable[[dict], dict]]):
+    context.formatters.update(formatter)
 
 
 def start():
     try:
         asyncio.run(engine.start())
     except Exception as e:
-        pass
-    finally:
-        pass
+        raise e

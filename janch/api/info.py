@@ -1,4 +1,4 @@
-from janch.src import *
+from janch.factories import *
 
 
 def get_all_gatherers():
@@ -10,8 +10,8 @@ def get_all_inspectors():
 
 
 def get_all_loggers():
-    return get_default_loggers()
+    return get_default_formatters()
 
 
-def get_all_actors():
-    return get_default_actors()
+def get_all_formatters():
+    return get_default_formatters()

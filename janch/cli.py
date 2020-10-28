@@ -2,7 +2,7 @@ import click
 import yaml
 from dotenv.main import dotenv_values
 
-from janch.main import start, init
+from janch.api.main import start, init
 
 dotenv_path = '.env'
 

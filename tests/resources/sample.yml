@@ -23,3 +23,41 @@ command-example:
     command_str: "cat .env | grep \"Hello\""
   inspect:
     result: Hello=world
+
+webservice-example-2:
+  gather:
+    type: curl
+    url: http://localhost
+  inspect:
+    status: 200
+    html: Hello World
+  handle:
+    onerror: Error occured in accessing {gather.url}
+    onpass: The status and content of {gather.url} looked good
+    onfail: Inspection failed because {inspect.miss}
+
+grep-example-2:
+  gather:
+    type: grep
+    filepath: .env
+    search: "="
+  inspect:
+    result:
+      type: regex
+      value: "(.*)=(.*)"
+    line_count: 1
+  handle:
+    onerror:
+    onpass:
+    onfail:
+
+command-example-2:
+  gather:
+    type: command
+    command_str: "cat .env | grep \"Hello\""
+  inspect:
+    result: Hello=world
+  handle:
+    onerror:
+    onpass:
+    onfail:

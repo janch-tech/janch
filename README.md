@@ -38,30 +38,39 @@ A YAML config centric tool to act on your service status
 - [x] Regex Inspector
 - [x] Write Gatherer (command type)
 - [x] Expected vs Actual comparison
-- [ ] Make Regex group printable
-- [ ] Regex Groups
+- [x] Error that occurs in gather recorded
+- [x] abstract base class for gatherers
+- [x] abstract base class for inspectors
+- [x] abstract base class for formatters
+- [x] abstract based class for loggers
+- [x] Log formatters
+- [x] Nice CLI Table
+- [ ] Add header and footer to CLI table
 - [ ] Write Gatherer (permission type)
 - [ ] Write Gatherer (disk space type)
+- [ ] Default inspector should check if error occured
 - [ ] Write Gatherer (memory usage type)
 - [ ] Write Gatherer (cpu usage type)
 - [ ] Write Gatherer (database type)
-- [ ] Use Queue
 - [ ] Default gatherer should be simple url
-- [ ] Default inspector should check if error occured
 - [ ] CLI option to run only one item
 - [ ] CLI option to get info about a gatherer type
-- [ ] abstract base class for gatherers
-- [ ] abstract base class for inspectors
-- [ ] abstract base class for actors
-- [ ] abstract based class for loggers
 - [ ] Doc blocks
 - [ ] Research readthedocs
 - [ ] Create file loggers
-- [ ] Expression Parser
-- [ ] Alternate layout
 - [ ] Write unit tests
-- [ ] Explore Integration with Graphite
-- [ ] Explore webserver mode
-- [ ] Plugin by reading plugin location
 - [ ] Set up proper logging
-- [ ] Log formatters
+- [ ] Multi-gather
+
+# Not do for now
+
+- [ ] Expression Parser
+- [ ] Explore webserver mode
+- [ ] Explore Integration with Graphite
+- [ ] Use Queue
+- [ ] emit events
+- [ ] Regex Groups
+- [ ] Make Regex group printable
+- [ ] Alternate layout
+- [ ] Plugin by reading plugin location
+- [ ] Record response time taken
