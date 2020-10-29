@@ -24,6 +24,7 @@ class Inspector(ABC):
 
 
 class EqualsInspector(Inspector):
+    """Checks a==b"""
 
     @staticmethod
     def type() -> str:
@@ -34,6 +35,7 @@ class EqualsInspector(Inspector):
 
 
 class RegexInspector(Inspector):
+    """Checks regex match"""
 
     @staticmethod
     def type() -> str:
@@ -42,7 +44,7 @@ class RegexInspector(Inspector):
     async def match(self, target, expression) -> bool:
         import re
         pattern = re.compile(expression)
-        matches = pattern.match(target)
+        matches = pattern.match(repr(target))
         return matches is not None
 
 

@@ -15,13 +15,14 @@ class Logger(ABC):
 
 
 class CLILogger(Logger):
+    """Logs to command line"""
 
     @staticmethod
     def type() -> str:
         return 'cli'
 
     async def main(self, message):
-        print(message, end="")
+        print(message)
 
         return True
 

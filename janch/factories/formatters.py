@@ -1,18 +1,15 @@
 import json
 from abc import ABC
 
+from janch.factories.gatherers import NO_ERROR
+from janch.utils.display import Display
+
 
 class Formatter(ABC):
 
     @staticmethod
     def type() -> str:
         raise NotImplementedError("Please specify type for this formatter")
-
-    async def header(self, params) -> str:
-        raise NotImplementedError("Please specify a string header")
-
-    async def footer(self, params) -> str:
-        raise NotImplementedError("Please specify a string footer")
 
     async def main(self, params) -> str:
         raise NotImplementedError("Please specify a method for formatting")
@@ -41,116 +38,76 @@ class Formatter(ABC):
 
         params['match_percent'] = round(params['match_count'] * 1.0 / params['inspect_count'], 2)
 
-        body = await self.main(params)
+        header, body = await self.main(params)
 
-        return body
+        return header, body
 
 
 class JSONFormatter(Formatter):
-
-    async def header(self, params) -> str:
-        pass
-
-    async def footer(self, params) -> str:
-        pass
+    """Formats everything as a single JSON"""
 
     @staticmethod
     def type() -> str:
         return 'json'
 
-    async def main(self, params) -> str:
-        return json.dumps(params)
+    async def main(self, params):
+        return None, json.dumps(params)
 
 
 class SimpleFormatter(Formatter):
+    """Easy to read format"""
 
-    async def header(self, params) -> str:
-        return "|" + '|'.join(self.DIM.keys()) + '|'
+    DIM = {
+        'item': 32,
+        'type': 8,
+        'field': 16,
+        'expected': 32,
+        'actual': 32,
+        'match': 6,
+        'error': 6,
 
-    async def footer(self, params) -> str:
-        return "Thanks"
+    }
 
     def __init__(self):
-        self.DIM = {
-            'item': 32,
-            'type': 8,
-            'field': 16,
-            'expected': 32,
-            'actual': 32,
-            'match': 5,
-            'error': 5,
-
-        }
+        self.displayer = Display(SimpleFormatter.DIM)
 
     @staticmethod
     def type() -> str:
         return 'simple'
 
-    def _fit(self, size, txt):
-        # Length
-        l = len(txt)
-
-        # dimension of field
-        d = size
-
-        # number of spaces to append
-        s = d - l if l <= d else 0
-
-        # ellipsis
-        e = '..' if l > d else ''
-
-        return txt[0:(l if l <= d else (d - len(e)))] + e + ' ' * s
-
-    def _create_table(self, rows):
-        ret = ''
-        for row in rows:
-            ret += f"|"
-            for k, v in self.DIM.items():
-                ret += self._fit(v, str(row[k]))
-                ret += '|'
-
-            ret += '\n'
-        return ret
-
-    async def main(self, params) -> str:
-        rows = []
-
+    async def main(self, params):
         for k, v in params['settings']['inspect'].items():
+
             row = {
                 'item': params['item'],
                 'type': params['settings']['gather']['type'],
                 'field': k,
                 'expected': v['value'] if isinstance(v, dict) else v,
-                'actual': params['actuals'][k],
-                'match': params['matches'][k],
-                'error': params['gathered']['error'] is not None
+                'actual': params['actuals'].get(k),
+                'match': params['matches'].get(k) or False,
+                'error': params['gathered']['error']!=NO_ERROR
             }
 
-            rows.append(row)
+            self.displayer.add_row(row)
 
-        return self._create_table(rows)
+        return self.displayer.get_header(), self.displayer.format()
 
 
 class TabularFormatter(Formatter):
-
-    async def header(self, params) -> str:
-        pass
-
-    async def footer(self, params) -> str:
-        pass
+    """Pipe delimited format"""
 
     @staticmethod
     def type() -> str:
         return 'tabular'
 
-    async def main(self, params) -> str:
+    async def main(self, params):
         item = params['item']
         gathered = params['gathered']
         expecteds = params['expecteds']
         actuals = params['actuals']
         matches = params['matches']
 
-        return f"{item}" \
+        return None, f"{item}" \
             f"|{gathered['error']}" \
             f"|{expecteds or ''}" \
             f"|{actuals or ''}" \
@@ -158,18 +115,13 @@ class TabularFormatter(Formatter):
 
 
 class FriendlyFormatter(Formatter):
-
-    async def header(self, params) -> str:
-        pass
-
-    async def footer(self, params) -> str:
-        pass
+    """Natural language format"""
 
     @staticmethod
     def type() -> str:
         return 'friendly'
 
-    async def main(self, params) -> str:
+    async def main(self, params):
         item = params['item']
         gathered = params['gathered']
         expecteds = params['expecteds']
@@ -209,7 +161,7 @@ class FriendlyFormatter(Formatter):
                     k + "=" + str(v), 2
                 )
 
-        return final
+        return None, final
 
 
 def get_default_formatters():

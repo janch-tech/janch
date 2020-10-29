@@ -1,7 +1,11 @@
 import asyncio
 
+from janch.factories.gatherers import NO_ERROR
 from janch.utils import context
 
+_state={
+    'is_header_logged': False
+}
 
 def debug(message):
     (f"*** {message} *** ")
@@ -13,6 +17,7 @@ async def inspect(gathered, settings):
     ret = {}
 
     DEFAULT = 'regex'
+
     for field_name, details in settings.items():
 
         if field_name in gathered:
@@ -84,11 +89,28 @@ async def log(formatted):
     debug("Logging completed")
 
 
+
+def _set_up_default_item_settings(settings):
+    if not 'inspect' in settings:
+        settings.update({'inspect':{}})
+
+    if not 'error' in settings.get('inspect'):
+        settings['inspect'].update({'error':NO_ERROR})
+
 async def start_item(item, settings):
     debug(f"Starting {item}")
+
+    _set_up_default_item_settings(settings)
+
+
     gathered = await gather(settings['gather'])
-    inspected = await inspect(gathered, settings['inspect'])
-    body = await format(item, settings, gathered, inspected)
+    inspected = await inspect(gathered, settings.get('inspect', {}))
+    header, body = await format(item, settings, gathered, inspected)
+
+    if not _state.get('is_header_logged'):
+        header_logged = await log(header)
+        _state.update({'is_header_logged':True})
+
     logged = await log(body)
 
     debug("Complete")

@@ -45,25 +45,29 @@ A YAML config centric tool to act on your service status
 - [x] abstract based class for loggers
 - [x] Log formatters
 - [x] Nice CLI Table
-- [ ] Add header and footer to CLI table
-- [ ] Write Gatherer (permission type)
-- [ ] Write Gatherer (disk space type)
-- [ ] Default inspector should check if error occured
-- [ ] Write Gatherer (memory usage type)
-- [ ] Write Gatherer (cpu usage type)
-- [ ] Write Gatherer (database type)
-- [ ] Default gatherer should be simple url
-- [ ] CLI option to run only one item
-- [ ] CLI option to get info about a gatherer type
+- [x] CLI option to run only one item
+- [x] CLI option to get info about a gatherer type
+- [x] Add header support
+- [x] Default inspector should check if error occured
 - [ ] Doc blocks
-- [ ] Research readthedocs
-- [ ] Create file loggers
-- [ ] Write unit tests
 - [ ] Set up proper logging
-- [ ] Multi-gather
+- [ ] Publish to PyPi
+- [ ] Add to readthedocs
+- [ ] Create file loggers
 
 # Not do for now
 
+- [ ] Add footer support
+- [ ] System CTL type gatherer
+- [ ] Multi-gather
+- [ ] Write unit tests
+- [ ] Default gatherer should be simple url
+- [ ] Write Gatherer (permission type)
+- [ ] Write Gatherer (disk space type)
+- [ ] Write Gatherer (memory usage type)
+- [ ] Write Gatherer (cpu usage type)
+- [ ] Write Gatherer (database type)
+- [ ] Checking if things exist by scheme
 - [ ] Expression Parser
 - [ ] Explore webserver mode
 - [ ] Explore Integration with Graphite

@@ -3,8 +3,12 @@ from abc import ABC
 
 import aiohttp
 
+NO_ERROR = 'NOERROR'
+
 
 class Gatherer(ABC):
+    """Abstract base class for all Gatherer classes
+    """
 
     def __init__(self, settings):
         self.settings = settings
@@ -34,10 +38,16 @@ class Gatherer(ABC):
         for k, v in gathered.items():
             assert k in output
 
+        if not gathered.get('error'):
+            gathered['error'] = NO_ERROR
+
         return gathered
 
 
 class CurlGatherer(Gatherer):
+    """Gather information from a http(s) source
+
+    """
 
     @staticmethod
     def type():
@@ -58,7 +68,7 @@ class CurlGatherer(Gatherer):
 
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
+                async with session.get(url, ssl=False) as response:
                     ret['status'] = response.status
                     ret['headers'] = str(response.headers)
                     ret['html'] = str(await response.text())
@@ -71,6 +81,9 @@ class CurlGatherer(Gatherer):
 
 
 class CommandGatherer(Gatherer):
+    """Execute a shell command
+
+    """
 
     @staticmethod
     def type():
@@ -121,6 +134,9 @@ class CommandGatherer(Gatherer):
 
 
 class GrepGatherer(Gatherer):
+    """Execute a grep command
+
+    """
 
     @staticmethod
     def type():
