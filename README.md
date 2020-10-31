@@ -49,7 +49,7 @@ A YAML config centric tool to act on your service status
 - [x] CLI option to get info about a gatherer type
 - [x] Add header support
 - [x] Default inspector should check if error occured
-- [ ] Doc blocks
+- [x] Doc blocks
 - [ ] Set up proper logging
 - [ ] Publish to PyPi
 - [ ] Add to readthedocs
