@@ -4,7 +4,7 @@ from dotenv.main import dotenv_values
 
 from janch.api.info import *
 from janch.api.main import start, init
-from janch.utils.display import Display
+from janch.utils.display import FixedWidth
 
 dotenv_path = '.env'
 
@@ -21,6 +21,9 @@ def run(file, item):
     """Run janch using a defined yaml file"""
     context_dict = yaml.load(file.read(), Loader=yaml.SafeLoader)
 
+    # import json
+    # print(json.dumps(context_dict))
+
     if item:
         selected_item = {item: context_dict.get(item)} if item in context_dict else None
     else:
@@ -35,10 +38,6 @@ def run(file, item):
         exit()
 
 
-
-
-
-
 @main.group(invoke_without_command=False)
 def utils():
     "Show info about some utilities"
@@ -50,7 +49,7 @@ def _utils_info_prep(things_with_docs: dict):
         'description': 64
     }
 
-    display = Display(columns)
+    display = FixedWidth(columns)
 
     for gType, gClass in things_with_docs.items():
         display.add_row({"type": gType, "description": gClass.__doc__.split('\n')[0]})
@@ -68,7 +67,7 @@ def gatherers():
         'output': 32
     }
 
-    display = Display(columns)
+    display = FixedWidth(columns)
 
     for gType, gClass in get_all_gatherers().items():
         display.add_row({
@@ -86,7 +85,7 @@ def gatherers():
 def inspectors():
     "Show information about all the inspectors"
     type_and_class = get_all_inspectors()
-    header, body =_utils_info_prep(type_and_class)
+    header, body = _utils_info_prep(type_and_class)
     click.echo(header)
     click.echo(body)
 
@@ -95,17 +94,15 @@ def inspectors():
 def loggers():
     "Show information about all the loggers"
     type_and_class = get_all_loggers()
-    header, body =_utils_info_prep(type_and_class)
+    header, body = _utils_info_prep(type_and_class)
     click.echo(header)
     click.echo(body)
-
 
 
 @utils.command()
 def formatters():
     """Show information about all the formatters"""
     type_and_class = get_all_formatters()
-    header, body =_utils_info_prep(type_and_class)
+    header, body = _utils_info_prep(type_and_class)
     click.echo(header)
     click.echo(body)
-

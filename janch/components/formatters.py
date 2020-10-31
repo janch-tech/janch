@@ -1,20 +1,56 @@
+"""Formatters set the style in which message is logged.
+The formatters return a string which can be printed to cli or logged elsewhere
+
+"""
 import json
 from abc import ABC
 
-from janch.factories.gatherers import NO_ERROR
-from janch.utils.display import Display
+from janch.utils.constants import NO_ERROR
+from janch.utils.display import FixedWidth
 
 
 class Formatter(ABC):
+    """Abstract base class for a formatter. You can implement a custom formatter by extending
+    this class and overriding the methods
+    """
 
     @staticmethod
     def type() -> str:
+        """This is the string that identifies the specific formatter
+
+        Returns: str
+
+        """
         raise NotImplementedError("Please specify type for this formatter")
 
-    async def main(self, params) -> str:
+    async def main(self, params: dict) -> str:
+        """The main formatting logic goes here.
+
+        The params contain all the information that
+        can be displayed by the formatter
+
+        Args:
+            params: dict
+
+        Returns:
+
+        """
         raise NotImplementedError("Please specify a method for formatting")
 
     async def format(self, item, settings, gathered, inspected):
+        """This method creates the params for the main function
+
+        Ideally this method should not be overridden by the extending class
+
+        Args:
+            item:
+            settings:
+            gathered:
+            inspected:
+
+        Returns:
+
+        """
         params = {
             'item': item,
             'settings': settings,
@@ -48,9 +84,22 @@ class JSONFormatter(Formatter):
 
     @staticmethod
     def type() -> str:
+        """Return 'json'
+
+        Returns: str
+
+        """
         return 'json'
 
     async def main(self, params):
+        """Simply formats the params as JSON using the json library
+
+        Args:
+            params: dict
+
+        Returns: None, str
+
+        """
         return None, json.dumps(params)
 
 
@@ -69,15 +118,29 @@ class SimpleFormatter(Formatter):
     }
 
     def __init__(self):
-        self.displayer = Display(SimpleFormatter.DIM)
+        self.displayer = FixedWidth(SimpleFormatter.DIM)
 
     @staticmethod
     def type() -> str:
+        """Returns 'simple' as the name of this formatter
+
+        Returns: str
+
+        """
         return 'simple'
 
     async def main(self, params):
-        for k, v in params['settings']['inspect'].items():
+        """Format the results in a simple aligned tabular format
 
+        Columns: item, type, field, expected, actual, match, error
+
+        Args:
+            params:
+
+        Returns:
+
+        """
+        for k, v in params['settings']['inspect'].items():
             row = {
                 'item': params['item'],
                 'type': params['settings']['gather']['type'],
@@ -85,7 +148,7 @@ class SimpleFormatter(Formatter):
                 'expected': v['value'] if isinstance(v, dict) else v,
                 'actual': params['actuals'].get(k),
                 'match': params['matches'].get(k) or False,
-                'error': params['gathered']['error']!=NO_ERROR
+                'error': params['gathered']['error'] != NO_ERROR
             }
 
             self.displayer.add_row(row)
@@ -93,14 +156,27 @@ class SimpleFormatter(Formatter):
         return self.displayer.get_header(), self.displayer.format()
 
 
-class TabularFormatter(Formatter):
+class PipeDelimited(Formatter):
     """Pipe delimited format"""
 
     @staticmethod
     def type() -> str:
-        return 'tabular'
+        """Returns 'pipe' as the name of this formatter
+
+        Returns: str
+
+        """
+        return 'pipe'
 
     async def main(self, params):
+        """Displays information in a pipe delimited format
+
+        Args:
+            params:
+
+        Returns:
+
+        """
         item = params['item']
         gathered = params['gathered']
         expecteds = params['expecteds']
@@ -119,9 +195,22 @@ class FriendlyFormatter(Formatter):
 
     @staticmethod
     def type() -> str:
+        """Returns 'friendly' as the name of this formatter
+
+        Returns: str
+
+        """
         return 'friendly'
 
     async def main(self, params):
+        """Displays information in a friendly format with the information spanning multiple lines
+
+        Args:
+            params: dict
+
+        Returns:
+
+        """
         item = params['item']
         gathered = params['gathered']
         expecteds = params['expecteds']
@@ -165,6 +254,8 @@ class FriendlyFormatter(Formatter):
 
 
 def get_default_formatters():
-    formatters = [JSONFormatter, FriendlyFormatter, TabularFormatter, SimpleFormatter]
+    """Returns all formatters with the formatter type/id as key
+    """
+    formatters = [JSONFormatter, FriendlyFormatter, PipeDelimited, SimpleFormatter]
 
     return {f.type(): f for f in formatters}

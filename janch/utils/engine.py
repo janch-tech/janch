@@ -1,17 +1,35 @@
+"""Contains the main logic of Janch
+"""
+
 import asyncio
 
-from janch.factories.gatherers import NO_ERROR
 from janch.utils import context
+from janch.utils.constants import NO_ERROR
 
-_state={
+_state = {
     'is_header_logged': False
 }
 
+
 def debug(message):
+    """Temporarily placed for enabling and disabling debugging
+
+    Will be replaced by logging library later
+    """
+
     (f"*** {message} *** ")
 
 
 async def inspect(gathered, settings):
+    """Runs inspection on gathered data. Loads the inspector based on the settings
+
+    Args:
+        gathered: dict
+        settings: dict with settings from the inspect section of the config yml
+
+    Returns: dict containing results of the inspection
+
+    """
     debug("Inspecting")
 
     ret = {}
@@ -45,8 +63,17 @@ async def inspect(gathered, settings):
 
 
 async def gather(settings):
+    """Use the settings to gather information. Use the settings type to use the
+    right gatherer class
+
+    Args:
+        settings: dict representing gather related settings from the config yml
+
+    Returns: dict gathered data
+
+    """
     debug("Gathering")
-    type = settings.get("type") or "curl"
+    type = settings.get("type") or "http"
     gatherer = context.gatherers.get(type)
 
     gathered = None
@@ -59,7 +86,18 @@ async def gather(settings):
     return gathered
 
 
-async def format(item, settings, gathered, inspected):
+async def furnish(item, settings, gathered, inspected):
+    """Load the formatter to format the results of gathering and inspection
+
+    Args:
+        item: str The name of the item from the yml
+        settings: dict The full settings
+        gathered: dict The gathered information
+        inspected: dict The inspected information
+
+    Returns: str blob that be printed or logged
+
+    """
     debug("Formatting")
     type = 'simple'
     formatter = context.formatters[type]
@@ -74,6 +112,15 @@ async def format(item, settings, gathered, inspected):
 
 
 async def log(formatted):
+    """Log the formatted data
+
+    Args:
+        formatted: str
+
+    Returns: bool
+
+    """
+
     debug("Logging")
     type = 'cli'
 
@@ -89,27 +136,35 @@ async def log(formatted):
     debug("Logging completed")
 
 
-
 def _set_up_default_item_settings(settings):
     if not 'inspect' in settings:
-        settings.update({'inspect':{}})
+        settings.update({'inspect': {}})
 
     if not 'error' in settings.get('inspect'):
-        settings['inspect'].update({'error':NO_ERROR})
+        settings['inspect'].update({'error': NO_ERROR})
+
 
 async def start_item(item, settings):
+    """Runs Janch process on a specific item
+
+    Args:
+        item: str name of the item
+        settings: dict configuration of the item
+
+    Returns:
+
+    """
     debug(f"Starting {item}")
 
     _set_up_default_item_settings(settings)
 
-
     gathered = await gather(settings['gather'])
     inspected = await inspect(gathered, settings.get('inspect', {}))
-    header, body = await format(item, settings, gathered, inspected)
+    header, body = await furnish(item, settings, gathered, inspected)
 
     if not _state.get('is_header_logged'):
         header_logged = await log(header)
-        _state.update({'is_header_logged':True})
+        _state.update({'is_header_logged': True})
 
     logged = await log(body)
 
@@ -117,5 +172,10 @@ async def start_item(item, settings):
 
 
 async def start():
+    """Called to start the Janch process
+
+    Returns:
+
+    """
     config = context.config
     await asyncio.gather(*(start_item(item, settings) for item, settings in config.items()))
