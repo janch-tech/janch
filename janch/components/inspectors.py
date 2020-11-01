@@ -107,7 +107,7 @@ class RegexInspector(Inspector):
         """
         import re
         pattern = re.compile(expression)
-        matches = pattern.match(repr(target))
+        matches = pattern.match(target)
         return matches is not None
 
 

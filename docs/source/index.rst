@@ -1,9 +1,14 @@
 Welcome to Janch's documentation!
 =================================
 
-Some Words.
+Check anything
+
+.. include:: ../../README.rst
 
 .. toctree::
+    :maxdepth: 2
+    :caption: Contents:
+
 
 .. autosummary::
     :toctree: _autosummary

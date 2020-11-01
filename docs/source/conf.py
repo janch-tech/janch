@@ -40,7 +40,7 @@ release = '0.0.1'
 #     'sphinx.ext.napoleon'
 # ]
 
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary','sphinx.ext.napoleon']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary','sphinx.ext.napoleon','recommonmark']
 
 autosummary_generate = True
 
@@ -68,8 +68,17 @@ html_static_path = ['_static']
 
 
 # -- Extension configuration -------------------------------------------------
+from recommonmark.parser import CommonMarkParser
+
+source_parsers = {
+    '.md': CommonMarkParser,
+}
+
+source_suffix = ['.rst', '.md']
+
+
 
 # -- Options for todo extension ----------------------------------------------
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+# todo_include_todos = True

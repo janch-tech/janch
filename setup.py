@@ -1,12 +1,12 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="janch-taarimalta", # Replace with your own username
+    name="janch",
     version="0.0.1",
-    author="Sawan Vaidya",
+    author="taarimalta",
     author_email="",
     description="A YAML config centric tool to act on your service status",
     long_description=long_description,
@@ -21,7 +21,10 @@ setuptools.setup(
     ],
     python_requires='>=3.8',
     install_requires=[
-        'Click',
+        'click >= 7.1.2',
+        'PyYAML >= 5.3.1',
+        'aiohttp >= 3.7.0',
+        'python-dotenv >= 0.14.0'
     ],
     entry_points='''
     [console_scripts]

@@ -1,23 +1,16 @@
 webservice-example:
   gather:
-    type: curl
-    url: http://www.google.com
-  inspect:
-    status: 200
+    type: http
+    url: https://www.google.com
 
 grep-example:
   gather:
     type: grep
     filepath: .env
     search: '='
-  inspect:
-    result: (.*)=(.*)
-    line_count: 1
 
 command-example:
   gather:
     type: command
     command_str: cat .env | grep \"Hello\"
-  inspect:
-    result: Hello=world
 
