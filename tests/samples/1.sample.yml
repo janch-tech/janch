@@ -1,0 +1,16 @@
+webservice-example:
+  gather:
+    type: http
+    url: https://www.google.com
+
+grep-example:
+  gather:
+    type: grep
+    filepath: .env
+    search: '='
+
+command-example:
+  gather:
+    type: command
+    command_str: cat .env | grep \"Hello\"
+

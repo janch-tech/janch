@@ -1,0 +1,22 @@
+command-example:
+  gather:
+    type: command
+    command_str: python --version
+  inspect:
+    result: ^Python 3\.(.*)$
+
+grep-example:
+  gather:
+    type: grep
+    filepath: test.env
+    search: '='
+  inspect:
+    result: (.*)=(.*)
+    line_count: 1
+
+webservice-example:
+  gather:
+    type: http
+    url: http://www.example.com
+  inspect:
+    status: 200
