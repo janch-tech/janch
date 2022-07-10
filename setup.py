@@ -5,13 +5,13 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="janch",
-    version="0.0.1",
+    version="0.0.2",
     author="taarimalta",
     author_email="",
     description="A YAML config centric tool to act on your service status",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/janch-tech/janch",
     packages=setuptools.find_packages(),
     include_package_data=True,
     classifiers=[

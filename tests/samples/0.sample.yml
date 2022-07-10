@@ -1,0 +1,28 @@
+# Checks whether Python version start with 3
+
+command-example:
+  gather:
+    type: command
+    command_str: python --version
+  inspect:
+    result: ^Python 3\.(.*)$
+
+# Checks whether an .env file exists with = 
+
+grep-example:
+  gather:
+    type: grep
+    filepath: tests/samples/sample.env.example
+    search: '='
+  inspect:
+    result: (.*)=(.*)
+    line_count: 1
+
+# Checks whether example.com is working
+
+webservice-example:
+  gather:
+    type: http
+    url: http://www.example.com
+  inspect:
+    status: 200

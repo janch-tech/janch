@@ -18,14 +18,31 @@ I just started the tool so the features are limited.
 Installation
 ------------
 
+Install from PyPi
+
 .. code-block:: bash
 
     pip install janch
+
+Run Help
+
+
+.. code-block:: bash
+    
+    janch --help
+
+
+Run a sample file
+
+.. code-block:: bash
+    
+    janch run tests/samples/0.sample.yml
 
 
 
 Quick Start
 -----------
+
 
 1. Create a YAML such as the following
 
