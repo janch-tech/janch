@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="janch",
-    version="0.0.1",
+    version="0.0.2",
     author="taarimalta",
     author_email="",
     description="A YAML config centric tool to act on your service status",
